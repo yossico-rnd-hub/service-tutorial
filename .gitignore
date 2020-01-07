@@ -1,0 +1,11 @@
+node_modules/
+package-lock.json
+
+logs
+*.log
+npm-debug.log*
+
+.npm
+
+.eslint*
+
