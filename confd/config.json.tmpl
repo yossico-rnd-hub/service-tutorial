@@ -1,0 +1,14 @@
+{
+  "redis" : {
+      "host" : "{{ getv "/global/redis/host" "redis" }}",        
+      "port" : {{ getv "/global/redis/port" "6379" }}
+  },
+  "logger" : {
+    "loggerLevel" : "{{ getv "/servicetutorial/logging/level" "info" }}",
+    "dateFormat" : "{{ getv "/servicetutorial/logging/dateformat" "yyyy-mm-dd'T'HH:MM:ss.l'Z'" }}"
+  },
+  "swagger" : {
+    "port" : {{ getv "/servicetutorial/port" "80" }},
+    "host" : "{{ getv "/servicetutorial/host" "http://localhost" }}"
+  }
+}

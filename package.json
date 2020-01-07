@@ -1,0 +1,57 @@
+{
+  "name": "service-tutorial",
+  "version": "0.0.1",
+  "description": "This is a demo locker service.",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "npm test",
+    "start": "node --inspect=[::]:9222 index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yossico-rnd-hub/service-tutorial.git"
+  },
+  "keywords": [
+    "tutorial",
+    "node",
+    "locking"
+  ],
+  "author": "yossico@rnd-hub",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yossico-rnd-hub/service-tutorial/issues"
+  },
+  "homepage": "https://github.com/yossico-rnd-hub/service-tutorial#readme",
+  "dependencies": {
+    "config": "^3.2.4",
+    "connect": "^3.7.0",
+    "cors": "^2.8.5",
+    "http-status-codes": "^1.4.0",
+    "ioredis": "^4.14.1",
+    "js-yaml": "^3.13.1",
+    "kontainer-di": "^0.9.9",
+    "serve-static": "^1.14.1",
+    "swagger": "^0.7.5",
+    "swagger-tools": "^0.10.4",
+    "winston": "^3.2.1"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.2.7",
+    "@types/config": "0.0.36",
+    "@types/connect": "^3.4.33",
+    "@types/cors": "^2.8.6",
+    "@types/http-status-codes": "^1.2.0",
+    "@types/ioredis": "^4.14.3",
+    "@types/js-yaml": "^3.12.1",
+    "@types/mocha": "^5.2.7",
+    "@types/node": "^13.1.4",
+    "@types/serve-static": "^1.13.3",
+    "@types/swagger-tools": "^0.10.6",
+    "@types/winston": "^2.4.4",
+    "chai": "^4.2.0",
+    "mocha": "^7.0.0"
+  }
+}

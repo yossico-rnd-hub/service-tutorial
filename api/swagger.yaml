@@ -1,0 +1,31 @@
+swagger: '2.0'
+info:
+  description: >-
+    This is your homework service.
+  title: Tutorial Service
+  version: 1.0.0
+basePath: "/"
+paths: 
+  '/lock/resource/{id}':
+    x-swagger-router-controller: lockingController
+    get:
+      tags:
+      - "getLockedResourceByIdAsync"
+      description: Queries the state of a lock on a resource by id.
+      operationId: getLockedResourceByIdAsync
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+      - in: "path"
+        name: "id"
+        type: string
+        required: true
+        description: The id of the resource to query.
+      responses:
+        200:
+          description: OK
+          schema:
+            type: boolean
+

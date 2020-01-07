@@ -1,0 +1,29 @@
+[template]
+src = "config.json.tmpl"
+dest = "/opt/mp-gw-service/config/production.json"
+keys = [
+  "/marcopolo/host",
+	"/marcopolo/port",
+  "/marcopolo/jaeger/host",
+  "/marcopolo/jaeger/port",
+  "/marcopolo/redis/host",
+  "/marcopolo/redis/port",
+  "/marcopolo/redis/db",
+  "/marcopolo/redis/connecttimeout",
+  "/global/objectstorage/endpoint",
+  "/global/objectstorage/accesskeyid",
+  "/global/objectstorage/secretaccesskey",
+  "/marcopolo/aws/cache/bucket",
+  "/marcopolo/aws/cache/ttl",
+  "/marcopolo/workflow/queue/name",
+  "/marcopolo/workflow/message/prefix",
+  "/marcopolo/cache/queue/name",
+  "/marcopolo/cache/retrievetimeoutms",
+  "/marcopolo/logging/level",
+  "/marcopolo/logging/dateFormat",
+  "/marcopolo/metrics/queue/name",
+  "/marcopolo/requesttimeoutms",
+  "/marcopolo/cache/cachelimits/redis/ttldays",
+  "/marcopolo/cache/cachelimits/s3/ttldays",
+  "/marcopolo/ogc/wmts/gridsets"
+]
