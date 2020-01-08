@@ -6,11 +6,11 @@ info:
   version: 1.0.0
 basePath: "/"
 paths: 
-  '/lock/resource/{id}':
+  '/locking/resources/lock/{resourceId}':
     x-swagger-router-controller: lockingController
     get:
       tags:
-      - "getLockedResourceByIdAsync"
+      - "Query Lock Status"
       description: Queries the state of a lock on a resource by id.
       operationId: getLockedResourceByIdAsync
       consumes:
@@ -19,7 +19,7 @@ paths:
         - application/json
       parameters:
       - in: "path"
-        name: "id"
+        name: "resourceId"
         type: string
         required: true
         description: The id of the resource to query.
@@ -27,5 +27,111 @@ paths:
         200:
           description: OK
           schema:
-            type: boolean
+            $ref: '#/definitions/lockedResource'
+        404:
+          $ref: '#/responses/resourceNotFound'
+    post:
+      tags:
+      - "Lock"
+      description: Tries to lock a resource by resource id.
+      operationId: tryLockResourceByIdAsync
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+      - in: "path"
+        name: "resourceId"
+        type: string
+        required: true
+        description: The id of the resource to lock.
+      - in: body
+        name: lockRequest
+        schema: 
+          $ref: '#/definitions/lockRequest'
+      responses:
+        200:
+          description: OK, lock id.
+          schema:
+            type: string
+          
+  '/locking/resources/renewlease/{lockId}':
+    x-swagger-router-controller: lockingController
+    post:
+      tags:
+      - "Renew Lease"
+      description: Tries to renew the lock lease.
+      operationId: tryRenewLockLease
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+      - in: "path"
+        name: "lockId"
+        type: string
+        required: true
+        description: The id of the lock to renew.
+      responses:
+        200:
+          description: OK
+          schema:
+            $ref: '#/definitions/lockedResource'
+        404:
+          $ref: '#/responses/resourceNotFound'
+          
+  '/locking/resources/unlock/{lockId}':
+    x-swagger-router-controller: lockingController
+    post:
+      tags:
+      - "Unlock"
+      description: Tries to unlock a resource by resource id.
+      operationId: tryUnlockResourceByIdAsync
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+      - in: "path"
+        name: "lockId"
+        type: string
+        required: true
+        description: The id of the lock to unlock.
+      responses:
+        200:
+          $ref: '#/responses/OK' 
+        404:
+          $ref: '#/responses/resourceNotFound'
 
+responses:
+  OK:
+    description: OK
+  resourceNotFound:
+    description: The requested resource was not found on the server.
+
+definitions:
+  lockType:
+    type: "string"
+    enum: ["unlocked", "readLock","writeLock", "expired"]
+    description: The current lock status.
+  lockedResource:
+    type: "object"
+    properties:
+      resourceId:
+        type: string
+        description: The id of the requested resource.
+      lockType:
+        $ref: '#/definitions/lockType'
+      ttl:
+        type: "integer"
+        description: The ttl in ms.
+  lockRequest:
+    type: "object"
+    properties:
+      lockType:
+        $ref: '#/definitions/lockType'
+      ttl:
+        type: integer
+        description: Lock ttl in ms.
+
+  
