@@ -1,10 +1,11 @@
 #!/bin/bash
 set -e
 
-#run confd
+# Run confd, the CONFD_BACKEND is an environment variable that is passed to the docker on run.
 confd -onetime -backend ${CONFD_BACKEND:-env}
 
-#run app
 echo "Running application"
 
+# Start the service, through the configured 'npm start' command.
+# Please see package.json file.
 npm start

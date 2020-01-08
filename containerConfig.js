@@ -1,7 +1,10 @@
+// Require dependencies.
+
 const container = require("kontainer-di");
 const config = require("config");
 const logger = require("winston");
 
+// Export the container instance.
 module.exports = container;
 
 // Register dependencies.
