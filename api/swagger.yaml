@@ -1,18 +1,18 @@
 swagger: '2.0'
 info:
   description: >-
-    This is your homework service.
+    Writing a (gg) service from scratch.
   title: Tutorial Service
-  version: 1.0.0
+  version: 0.1.0
 basePath: "/"
 paths: 
   '/lock/resource/{id}':
     x-swagger-router-controller: lockingController
     get:
       tags:
-      - "getLockedResourceByIdAsync"
+      - "getIsLockedByResourceId"
       description: Queries the state of a lock on a resource by id.
-      operationId: getLockedResourceByIdAsync
+      operationId: getIsLockedByResourceId
       consumes:
         - application/json
       produces:

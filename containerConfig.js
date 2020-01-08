@@ -2,7 +2,7 @@
 
 const container = require("kontainer-di");
 const config = require("config");
-const logger = require("winston");
+const logger = require("./logger");
 
 // Export the container instance.
 module.exports = container;
@@ -14,12 +14,8 @@ container.register("redisConfig",[], config.redis);
 container.register("loggerConfig",[], config.logger);
 container.register("swaggerConfig",[], config.swagger);
 
-// Register services.
+// Register logger.
 container.register("logger",[], logger);
-
-
-
-
 
 // Start the services (calls the 'start' function of a service if defined).
 container.startAll();
