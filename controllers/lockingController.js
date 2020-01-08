@@ -1,11 +1,10 @@
-// Require dependencies.
-
+// dependencies.
 const HttpCodes = require("http-status-codes");
 
 /**
  * Gets locked resource status by id.
- * @param {*} request An object describing the request.
- * @param {*} response An object describing the response.
+ * @param {*} req http request.
+ * @param {*} res http response.
  * @param {*} next Calls the next middleware (if any).
  * @returns {Promise<void>}
  */
