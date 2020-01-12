@@ -1,10 +1,12 @@
+const AbstractMethodCallError = require("../errors/abstractMethodCallError");
+
 /**
  * A locker interface.
  */
 module.exports = class Locker {
     constructor() {
         if (this.constructor === Locker)
-            throw new Error('Cannot instanciate abstract class');
+            throw new AbstractMethodCallError();
     }
 
     /**
@@ -14,7 +16,7 @@ module.exports = class Locker {
      * @returns {Promise<String>} returns a promise containing a token (a random string to be used in later calls).
      */
     lock(resourceId, ttl) {
-        throw new Error('Cannot instanciate abstract class');
+        throw new AbstractMethodCallError();
     }
 
     /**
@@ -24,7 +26,7 @@ module.exports = class Locker {
      * @returns {Promise<Boolean>} returns a promise designating success/failure.
      */
     unlock(resourceId, token) {
-        throw new Error('Cannot instanciate abstract class');
+        throw new AbstractMethodCallError();
     }
 
     /**
@@ -34,8 +36,8 @@ module.exports = class Locker {
      * @param {Number} ttl - time to live in ms.
      * @returns {Promise<Boolean>} returns a promise designating success/failure.
      */
-    renewLease(resourceId, token, ttl) {
-        throw new Error('Cannot instanciate abstract class');
+    renewLockLease(resourceId, token, ttl) {
+        throw new AbstractMethodCallError();
     }
 
     /**
@@ -44,6 +46,6 @@ module.exports = class Locker {
      * @returns {Promise<Boolean>} returns a promise designating locked state.
      */
     isLocked(resourceId) {
-        throw new Error('Cannot instanciate abstract class');
+        throw new AbstractMethodCallError();
     }
 }
