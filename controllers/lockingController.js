@@ -1,26 +1,29 @@
 // dependencies.
 const HttpCodes = require("http-status-codes");
+const container = require("../containerConfig");
+const locker = container.get("locker");
+const logger = container.get("logger");
 
 /**
- * Gets locked resource status by id.
+ * Gets whether the requested resource is locked, by resource id.
  * @param {*} req http request.
  * @param {*} res http response.
  * @param {*} next Calls the next middleware (if any).
  * @returns {Promise<void>}
  */
-module.exports.getLockedResourceByIdAsync = async (request, response, next) => {
+module.exports.getIsLockedByResourceIdAsync = async (request, response, next) => {
     // Get the parameters provided to the rest api.
     let resourceId = request.swagger.params.resourceId.value;
 
-    // Call bussiness logic.
-    let responseObj = {
-        resourceId: resourceId,
-        lockType: "readLock",
-        ttl: 10000
-    };
+    try {
+        // Call bussiness logic.
+        let isLocked = await locker.isLocked(resourceId);
 
-    // Set status code, and end the request.
-    _sendResponse(response, HttpCodes.OK, responseObj);
+        // Set status code, and end the request.
+        _sendResponse(response, HttpCodes.OK, isLocked);
+    } catch (error) {
+        _sendErrorResponse(response, error);
+    }
 }
 
 /**
@@ -34,20 +37,21 @@ module.exports.tryLockResourceByIdAsync = async (request, response, next) => {
 
     try {
         // Get the parameters provided to the rest api.
-        let resourceId = request.swagger.params.resourceId;
+        let resourceId = request.swagger.params.resourceId.value;
+        let ttl = request.swagger.params.ttl.value;
 
         // Call bussiness logic.
-        let lockId = "some lock id";
+        let lockToken = await locker.lock(resourceId, ttl);
 
-        _sendResponse(response, HttpCodes.OK, lockId);
+        _sendResponse(response, HttpCodes.OK, lockToken);
     }
     catch (error) {
-        // Respond with error.
+        _sendErrorResponse(response, error);
     }
 }
 
 /**
- * Tries to renew a lock lease by lock id.
+ * Tries to renew a lock lease by lock token.
  * @param {*} request An object describing the request.
  * @param {*} response An object describing the response.
  * @param {*} next Calls the next middleware (if any).
@@ -57,39 +61,64 @@ module.exports.tryRenewLockLease = async (request, response, next) => {
 
     try {
         // Get the parameters provided to the rest api.
-        let lockId = request.swagger.params.lockId;
+        let renewRequest = request.swagger.params.renewRequest.value;
 
+        // Call bussiness logic.
+        let renewed = await locker.renewLease(renewRequest.resourceId, renewRequest.token, renewRequest.ttl);
 
-        _sendResponse(response, HttpCodes.OK);
+        _sendResponse(response, HttpCodes.OK, renewed);
     }
     catch (error) {
         // Respond with error.
+        _sendErrorResponse(response, error);
     }
 }
 
 /**
- * Tries to unlock a resource by lock id.
+ * Tries to unlock a resource by lock token.
  * @param {*} request An object describing the request.
  * @param {*} response An object describing the response.
  * @param {*} next Calls the next middleware (if any).
  * @returns {Promise<void>}
  */
 module.exports.tryUnlockResourceByIdAsync = async (request, response, next) => {
-    try{
+    try {
         // Get the parameters provided to the rest api.
-        let lockId = request.swagger.params.lockId;
+        let resourceId = request.swagger.params.resourceId.value;
+        let lockToken = request.swagger.params.token.value;
 
+        // Call bussiness logic.
+        let unlocked = await locker.unlock(resourceId, lockToken);
 
-        _sendResponse(response, HttpCodes.OK);
+        _sendResponse(response, HttpCodes.OK, unlocked);
     }
-    catch(error){
+    catch (error) {
         // Respond with error.
+        _sendErrorResponse(response, error);
     }
 }
 
-function _sendResponse(response, statusCode, value){
+
+function _sendResponse(response, statusCode, value) {
+    // Set status code, and end the request.
+    response.statusCode = statusCode;
+    response.setHeader("Content-Type", "application/json");
+    response.end(JSON.stringify(value));
+}
+
+function _sendErrorResponse(response, error){
+
+    if (error instanceof TypeError) {
+        // Provided parameters were not in the correct format.
+        logger.error(error.message, error);
         // Set status code, and end the request.
-        response.statusCode = statusCode;
-        response.setHeader("Content-Type", "application/json");
-        response.end(JSON.stringify(value));
+        _sendResponse(response, HttpCodes.BAD_REQUEST, error.message);
+        return;
+    }
+
+    // Locker request failed.
+    logger.err("Failed to query locker.", error);
+
+    // Set status code, and end the request.
+    _sendResponse(response, HttpCodes.INTERNAL_SERVER_ERROR, isLocked);
 }

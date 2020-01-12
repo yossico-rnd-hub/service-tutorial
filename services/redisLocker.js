@@ -24,7 +24,6 @@ module.exports = class RedisLocker extends Locker {
             port: redisConfig.port,
             host: redisConfig.host
         });
-
         // Define a lock command using Lua script
         this._redis.defineCommand('lock', {
             numberOfKeys: 1,
