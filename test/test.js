@@ -16,14 +16,29 @@ async function test_async_await() {
     try {
         let token = await redisLocker.lock(resourceId, ttl);
         console.log('lock success: ' + token);
-        await redisLocker.unlock(resourceId, token);
-        console.log('unlock success: ' + token);
+
+        let res = await redisLocker.unlock(resourceId, token);
+        if (res)
+            console.log('unlock success: ' + token);
+        else
+            console.log('unlock failed: ' + token);
+
         console.log('trying to unlock again...');
-        var res = await redisLocker.unlock(resourceId, token);
-        console.log(res);
+        res = await redisLocker.unlock(resourceId, token);
+        if (res)
+            console.log('unlock again success.');
+        else
+            console.log('unlock again failed!');
+
+        console.log('trying to unlock with fake-token...');
+        res = await redisLocker.unlock(resourceId, 'fake-token');
+        if (res)
+            console.log('unlock fake-token success.');
+        else
+            console.log('unlock fake-token failed!');
     }
     catch (e) {
-        console.log('ERROR! ');
+        console.log('ERROR! ' + e);
     }
 
     console.log('done.')
@@ -39,41 +54,5 @@ function test_promise() {
         .then(() => { return redisLocker.unlock(resourceId, 'fake-token') })
         .catch((res) => { console.log('unlocked fake-token failure!') })
 }
-
-// function test_callback() {
-//     redisLocker.lock(resourceId, ttl, function (err, result) {
-//         if (err) {
-//             console.log('error: ' + err);
-//         }
-//         else {
-//             let token = result;
-//             console.log('locked: ' + token);
-
-//             redisLocker.unlock(resourceId, token, function (err, result) {
-//                 if (0 == result)
-//                     console.log('unlocked failed! ' + token)
-//                 else
-//                     console.log('unlocked succeeded: ' + token)
-//             });
-
-//             redisLocker.unlock(resourceId, token, function (err, result) {
-//                 if (0 == result)
-//                     console.log('unlock again failed! ' + token)
-//                 else
-//                     console.log('unlock again succeeded: ' + token)
-//             });
-
-//             redisLocker.unlock(resourceId, 'fake-token', function (err, result) {
-//                 token = result;
-//                 if (0 == result)
-//                     console.log('unlocked fake-token failed!')
-//                 else
-//                     console.log('unlocked fake-token succeeded.')
-//             });
-//         }
-//     });
-// }
-
-// test_async_await();
-test_promise();
-// test_callback();
+test_async_await();
+// test_promise();
