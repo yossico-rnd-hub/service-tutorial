@@ -1,5 +1,5 @@
-require("./locker")
-var Redis = require("ioredis");
+const Locker = require("./locker")
+const Redis = require("ioredis");
 
 /**
  * An implementation of locker functionality for redis.

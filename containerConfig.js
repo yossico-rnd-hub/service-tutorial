@@ -2,7 +2,7 @@
 
 const container = require("kontainer-di");
 const config = require("config");
-const logger = require("./logger");
+const Logger = require("./logger");
 const RedisLocker = require("./services/redisLocker");
 
 // Export the container instance.
@@ -14,7 +14,7 @@ container.register("loggerConfig",[], config.logger);
 container.register("swaggerConfig",[], config.swagger);
 
 // Register logger.
-container.register("logger",[], logger);
+container.register("logger",[], Logger);
 
 // Register dependencies.
 container.register("locker",["redisConfig"], RedisLocker);

@@ -10,9 +10,9 @@ paths:
     x-swagger-router-controller: lockingController
     get:
       tags:
-      - "Query Lock Status"
-      description: Queries the state of a lock on a resource by id.
-      operationId: getIsLockedByResourceId
+      - "Lock Status"
+      description: Gets whether the requested resource is locked, by resource id.
+      operationId: getIsLockedByResourceIdAsync
       consumes:
         - application/json
       produces:
@@ -27,9 +27,11 @@ paths:
         200:
           description: OK
           schema:
-            $ref: '#/definitions/lockedResource'
-        404:
-          $ref: '#/responses/resourceNotFound'
+            type: boolean
+        400:
+          $ref: '#/responses/BadRequest'
+        500:
+          $ref: '#/responses/InternalServerError'
     post:
       tags:
       - "Lock"
@@ -45,17 +47,21 @@ paths:
         type: string
         required: true
         description: The id of the resource to lock.
-      - in: body
-        name: lockRequest
-        schema: 
-          $ref: '#/definitions/lockRequest'
+      - in: query
+        name: ttl
+        type: integer
+        required: true
       responses:
         200:
-          description: OK, lock id.
+          description: On success returns lock token.
           schema:
-            type: string
+            type: "string"
+        400:
+          $ref: '#/responses/BadRequest'
+        500:
+          $ref: '#/responses/InternalServerError'
           
-  '/locking/resources/renewlease/{lockId}':
+  '/locking/resources/renewlease':
     x-swagger-router-controller: lockingController
     post:
       tags:
@@ -67,20 +73,23 @@ paths:
       produces:
         - application/json
       parameters:
-      - in: "path"
-        name: "lockId"
-        type: string
+      - in: "body"
+        name: "renewRequest"
+        schema:
+          $ref: '#/definitions/lockRenewRequest'
         required: true
-        description: The id of the lock to renew.
+        description: The renew request object.
       responses:
         200:
           description: OK
           schema:
-            $ref: '#/definitions/lockedResource'
-        404:
-          $ref: '#/responses/resourceNotFound'
+            type: boolean
+        400:
+          $ref: '#/responses/BadRequest'
+        500:
+          $ref: '#/responses/InternalServerError'
           
-  '/locking/resources/unlock/{lockId}':
+  '/locking/resources/unlock/{resourceId}/{token}':
     x-swagger-router-controller: lockingController
     post:
       tags:
@@ -93,43 +102,45 @@ paths:
         - application/json
       parameters:
       - in: "path"
-        name: "lockId"
+        name: "resourceId"
         type: string
         required: true
-        description: The id of the lock to unlock.
+        description: The id of the resource to unlock.
+      - in: "path"
+        name: "token"
+        type: string
+        required: true
+        description: The token provided on lock.
       responses:
         200:
           $ref: '#/responses/OK' 
         404:
-          $ref: '#/responses/resourceNotFound'
+          $ref: '#/responses/ResourceNotFound'
 
 responses:
   OK:
     description: OK
-  resourceNotFound:
+  BadRequest:
+    description: Bad Requested
+    schema:
+      type: string
+  InternalServerError:
+    description: An internal error occured.
+    schema:
+      type: string
+  ResourceNotFound:
     description: The requested resource was not found on the server.
 
 definitions:
-  lockType:
-    type: "string"
-    enum: ["unlocked", "readLock","writeLock", "expired"]
-    description: The current lock status.
-  lockedResource:
+  lockRenewRequest:
     type: "object"
     properties:
+      token:
+        type: string
+        description: The token that was provided
       resourceId:
         type: string
         description: The id of the requested resource.
-      lockType:
-        $ref: '#/definitions/lockType'
-      ttl:
-        type: "integer"
-        description: The ttl in ms.
-  lockRequest:
-    type: "object"
-    properties:
-      lockType:
-        $ref: '#/definitions/lockType'
       ttl:
         type: integer
         description: Lock ttl in ms.
