@@ -21,7 +21,7 @@ module.exports = class Locker {
      * unlock a resource by id.
      * @param {String} resourceId 
      * @param {String} token - a random string return from calling lock.
-     * @returns {Promise} returns a promise designating success/failure.
+     * @returns {Promise<Boolean>} returns a promise designating success/failure.
      */
     unlock(resourceId, token) {
         throw new Error('Cannot instanciate abstract class');
@@ -32,18 +32,18 @@ module.exports = class Locker {
      * @param {String} resourceId
      * @param {String} token - a random string return from calling lock.
      * @param {Number} ttl - time to live in ms.
-     * @returns {Promise} returns a promise designating success/failure.
+     * @returns {Promise<Boolean>} returns a promise designating success/failure.
      */
-    renewLockLease(resourceId, token, ttl) {
+    renewLease(resourceId, token, ttl) {
         throw new Error('Cannot instanciate abstract class');
     }
 
     /**
      * is resource locked by id.
      * @param {String} resourceId
-     * @returns {Promise} returns a promise designating locked state (true/false).
+     * @returns {Promise<Boolean>} returns a promise designating locked state.
      */
-    locked(resourceId) {
+    isLocked(resourceId) {
         throw new Error('Cannot instanciate abstract class');
     }
 }

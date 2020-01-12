@@ -7,7 +7,7 @@ var Redis = require("ioredis");
 module.exports = class RedisLocker extends Locker {
     /**
      * Creates a new @type {RedisLocker} instance.
-     * @param {*} redisConfig The redis configuration.
+     * @param {string} redisConfig The redis configuration.
      */
     constructor(redisConfig) {
         super();
@@ -27,24 +27,35 @@ module.exports = class RedisLocker extends Locker {
      * lock a resource by id.
      * @param {String} resourceId 
      * @param {Number} ttl - time to live in ms.
-     * @returns {Promise<String></String>} returns a promise containing a token (a random string to be used in later calls).
+     * @returns {Promise<String>} returns a promise containing a token (a random string to be used in later calls).
      */
     lock(resourceId, ttl) {
-        // lilo:TODO
         // arguments validation
         if (!(resourceId instanceof String))
             throw TypeError('resourceId should be a string')
         if (!(ttl instanceof Number) || ttl <= 0)
             throw TypeError('ttl should be a number > 0')
         
-        this._redis.set(resourceId, token, 'EX', ttl);
+        this._redis.defineCommand('lock', {
+            numberOfKeys: 1, 
+            lua:   `local function get_token()
+                        local token = randomstring(10)
+                        if 0 == redis.call("exists", token) then
+                            return token
+                        end
+                        return get_token()
+                    end
+                    local token = get_token()
+                    redis.call("set", ${resourceId}, token, "NX")
+                    redis.call("expire", ${resourceId}, ${ttl})`
+        })
     }
 
     /**
      * unlock a resource by id.
      * @param {String} resourceId 
      * @param {String} token - a random string return from calling lock.
-     * @returns {Promise} returns a promise designating success/failure.
+     * @returns {Promise<Boolean>} returns a promise designating success/failure.
      */
     unlock(resourceId, token) {
         // lilo:TODO
@@ -55,26 +66,18 @@ module.exports = class RedisLocker extends Locker {
      * @param {String} resourceId
      * @param {String} token - a random string return from calling lock.
      * @param {Number} ttl - time to live in ms.
-     * @returns {Promise} returns a promise designating success/failure.
+     * @returns {Promise<Boolean>} returns a promise designating success/failure.
      */
-    renewLockLease(resourceId, token, ttl) {
+    renewLease(resourceId, token, ttl) {
         // lilo:TODO
     }
 
     /**
      * is resource locked by id.
      * @param {String} resourceId
-     * @returns {Promise} returns a promise designating locked state (true/false).
+     * @returns {Promise<Boolean>} returns a promise designating locked state.
      */
-    locked(resourceId) {
+    isLocked(resourceId) {
         // lilo:TODO
     }
-}
-
-POST https://example.com/comments HTTP/1.1
-content-type: application/json
-
-{
-    "name": "sample",
-    "time": "Wed, 21 Oct 2015 18:27:50 GMT"
 }
