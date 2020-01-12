@@ -1,3 +1,5 @@
+const ArgumentError = require("../errors/argumentError.js");
+
 /**
  * An implementation of caching functionality for redis.
  */
@@ -9,7 +11,7 @@ module.exports = class RedisCache {
      */
     constructor(redisConfig){
         if(!redisConfig)
-            throw new TypeError("Invalid argument type: redisConfig.");
+            throw new ArgumentError("redisConfig");
             
         this._redisConfig = redisConfig;
     }
