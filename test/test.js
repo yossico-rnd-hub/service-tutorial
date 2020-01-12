@@ -1,23 +1,32 @@
+'use strict';
+
 var Redis = require("ioredis");
-var redis = new Redis(6379, "127.0.0.1");
 
-var resourceId = 'foo';
-var ttl = 10;
+var RedisLocker = require("../services/redisLocker")
 
-redis.defineCommand('lock', {
-    numberOfKeys: 1, 
-    lua:   `local function get_token()
-                local token = string.random(3)
-                if 0 == redis.call("exists", token) then
-                    return token
-                end
-                return get_token()
-            end
-            local token = get_token()
-            local token = 'foo'
-            redis.call("set", "${resourceId}", token, "NX")
-            redis.call("expire", "${resourceId}", ${ttl})`
+var redisLocker = new RedisLocker({
+    port: 6379,
+    host: 'localhost'
 });
 
-redis.lock('lilo', 10)
+async function test() {
+    var resourceId = 'lilo';
+    var ttl = 10;
 
+    try {
+        let token = await redisLocker.lock(resourceId, ttl);
+        console.log('lock success: ' + token);
+        await redisLocker.unlock(resourceId, token);
+        console.log('unlock success: ' + token);
+        console.log('trying to unlock again...');
+        var res = await redisLocker.unlock(resourceId, token);
+        console.log(res);
+    }
+    catch (e) {
+        console.log('ERROR! ');
+    }
+
+    console.log('done.')
+}
+
+test();

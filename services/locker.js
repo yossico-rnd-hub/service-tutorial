@@ -1,4 +1,6 @@
-const AbstractMethodCallError = require("../errors/abstractMethodCallError");
+'use strict';
+
+const AbstractMethodCallError = require(__dirname + '/../errors/abstractMethodCallError');
 
 /**
  * A locker interface.
@@ -10,7 +12,8 @@ module.exports = class Locker {
     }
 
     /**
-     * lock a resource by id.
+     * Lock a resource by id.
+     * The lock will be auto-released after the expire time is reached.
      * @param {String} resourceId 
      * @param {Number} ttl - time to live in ms.
      * @returns {Promise<String>} returns a promise containing a token (a random string to be used in later calls).
@@ -20,9 +23,9 @@ module.exports = class Locker {
     }
 
     /**
-     * unlock a resource by id.
+     * Unlock a resource.
      * @param {String} resourceId 
-     * @param {String} token - a random string return from calling lock.
+     * @param {String} token - a random string returned from calling lock.
      * @returns {Promise<Boolean>} returns a promise designating success/failure.
      */
     unlock(resourceId, token) {
@@ -30,9 +33,10 @@ module.exports = class Locker {
     }
 
     /**
-     * 
+     * Renew lease.
+     * The lock will be auto-released after the expire time is reached.
      * @param {String} resourceId
-     * @param {String} token - a random string return from calling lock.
+     * @param {String} token - a random string returned from calling lock.
      * @param {Number} ttl - time to live in ms.
      * @returns {Promise<Boolean>} returns a promise designating success/failure.
      */
@@ -41,7 +45,7 @@ module.exports = class Locker {
     }
 
     /**
-     * is resource locked by id.
+     * Check whther the resource is locked.
      * @param {String} resourceId
      * @returns {Promise<Boolean>} returns a promise designating locked state.
      */
