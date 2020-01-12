@@ -20,7 +20,7 @@ module.exports = class RedisLocker extends Locker {
         this._redis = new Redis({
             port: redisConfig.port,
             host: redisConfig.host
-        })
+        });
     }
 
     /**

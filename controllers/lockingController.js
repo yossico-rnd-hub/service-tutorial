@@ -1,5 +1,7 @@
 // dependencies.
 const HttpCodes = require("http-status-codes");
+const container = require("../containerConfig");
+const locker = container.get("locker");
 
 /**
  * Gets locked resource status by id.
