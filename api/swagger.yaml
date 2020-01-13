@@ -13,8 +13,6 @@ paths:
       - "Lock Status"
       description: Gets whether the requested resource is locked, by resource id.
       operationId: getIsLockedByResourceIdAsync
-      consumes:
-        - application/json
       produces:
         - application/json
       parameters:
@@ -37,8 +35,6 @@ paths:
       - "Lock"
       description: Tries to lock a resource by resource id.
       operationId: tryLockResourceByIdAsync
-      consumes:
-        - application/json
       produces:
         - application/json
       parameters:
@@ -96,8 +92,6 @@ paths:
       - "Unlock"
       description: Tries to unlock a resource by resource id.
       operationId: tryUnlockResourceByIdAsync
-      consumes:
-        - application/json
       produces:
         - application/json
       parameters:
