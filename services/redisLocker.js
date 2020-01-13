@@ -10,22 +10,19 @@ var Locker = require('./locker');
 module.exports = class RedisLocker extends Locker {
     /**
      * Creates a new @type {RedisLocker} instance.
-     * @param {string} redisConfig The redis configuration.
+     * @param {Redis} redis The redis instance.
      */
-    constructor(redisConfig) {
+    constructor(redis) {
         super();
 
-        if (!redisConfig) {
-            throw new TypeError("Invalid argument type: redisConfig.");
+        if (!redis) {
+            throw new TypeError("Invalid argument type: redis.");
         }
 
         // When a new Redis instance is created, a connection to Redis will be created at the same time.
         // By default, ioredis will try to reconnect when the connection to Redis is lost except when the 
         // connection is closed manually by redis.disconnect() or redis.quit().
-        this._redis = new Redis({
-            port: redisConfig.port,
-            host: redisConfig.host
-        });
+        this._redis = redis;
 
         // Define a lock command using Lua script
         this._redis.defineCommand('lock', {
@@ -73,10 +70,6 @@ module.exports = class RedisLocker extends Locker {
                         return 0
                     end`
         });
-    }
-
-    foo() {
-        console.log('foo');
     }
 
     /**
@@ -140,7 +133,7 @@ module.exports = class RedisLocker extends Locker {
      * @param {Number} ttl - time to live in ms.
      * @returns {Promise<Boolean>} returns a promise designating success/failure.
      */
-    renewLease(resourceId, token, ttl) {
+    renewLockLease(resourceId, token, ttl) {
         // arguments validation
         if (typeof resourceId != 'string')
             throw TypeError('(required) resourceId should be a string');
