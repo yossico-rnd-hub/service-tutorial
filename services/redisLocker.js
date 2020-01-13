@@ -14,8 +14,10 @@ module.exports = class RedisLocker extends Locker {
      */
     constructor(redisConfig) {
         super();
-        if (!redisConfig)
+
+        if (!redisConfig) {
             throw new TypeError("Invalid argument type: redisConfig.");
+        }
 
         // When a new Redis instance is created, a connection to Redis will be created at the same time.
         // By default, ioredis will try to reconnect when the connection to Redis is lost except when the 
@@ -24,6 +26,7 @@ module.exports = class RedisLocker extends Locker {
             port: redisConfig.port,
             host: redisConfig.host
         });
+
         // Define a lock command using Lua script
         this._redis.defineCommand('lock', {
             numberOfKeys: 1,
@@ -72,6 +75,10 @@ module.exports = class RedisLocker extends Locker {
         });
     }
 
+    foo() {
+        console.log('foo');
+    }
+
     /**
      * Lock a resource by id.
      * The lock will be auto-released after the expire time is reached.
@@ -82,10 +89,10 @@ module.exports = class RedisLocker extends Locker {
     lock(resourceId, ttl) {
         // arguments validation
         if (typeof resourceId != 'string')
-            throw TypeError('(required) resourceId should be a string')
+            throw TypeError('(required) resourceId should be a string');
 
         if (typeof ttl != 'number' || ttl <= 0)
-            throw TypeError('(required) ttl should be a number > 0')
+            throw TypeError('(required) ttl should be a number > 0');
 
         // try to lock the resource
         return this._redis.lock(resourceId, ttl);
@@ -100,13 +107,29 @@ module.exports = class RedisLocker extends Locker {
     unlock(resourceId, token) {
         // arguments validation
         if (typeof resourceId != 'string')
-            throw TypeError('(required) resourceId should be a string')
+            throw TypeError('(required) resourceId should be a string');
 
         if (typeof token != 'string')
-            throw TypeError('(required) token should be a string')
+            throw TypeError('(required) token should be a string');
 
         // try to unlock the resource
         return this._redis.unlock(resourceId, token);
+    }
+
+    /**
+     * Check whether the resource is locked.
+     * @param {String} resourceId
+     * @returns {Promise<Boolean>} returns a promise designating locked state.
+     */
+    async isLocked(resourceId) {
+        // arguments validation
+        if (typeof resourceId != 'string')
+            throw TypeError('(required) resourceId should be a string');
+
+        let token = await this._redis.get(resourceId);
+        if (token)
+            return true;
+        return false;
     }
 
     /**
@@ -120,27 +143,21 @@ module.exports = class RedisLocker extends Locker {
     renewLease(resourceId, token, ttl) {
         // arguments validation
         if (typeof resourceId != 'string')
-            throw TypeError('(required) resourceId should be a string')
+            throw TypeError('(required) resourceId should be a string');
 
         if (typeof token != 'string')
-            throw TypeError('(required) token should be a string')
+            throw TypeError('(required) token should be a string');
 
         if (typeof ttl != 'number' || ttl <= 0)
-            throw TypeError('(required) ttl should be a number > 0')
+            throw TypeError('(required) ttl should be a number > 0');
 
         // lilo:TODO
     }
 
     /**
-     * Check whther the resource is locked.
-     * @param {String} resourceId
-     * @returns {Promise<Boolean>} returns a promise designating locked state.
+     * disconnect from database.
      */
-    isLocked(resourceId) {
-        // arguments validation
-        if (typeof resourceId != 'string')
-            throw TypeError('(required) resourceId should be a string')
-
-        // lilo:TODO
+    disconnect() {
+        this._redis.disconnect();
     }
 }
