@@ -13,8 +13,6 @@ paths:
       - "Lock Status"
       description: Gets whether the requested resource is locked, by resource id.
       operationId: getIsLockedByResourceIdAsync
-      consumes:
-        - application/json
       produces:
         - application/json
       parameters:
@@ -37,8 +35,6 @@ paths:
       - "Lock"
       description: Tries to lock a resource by resource id.
       operationId: tryLockResourceByIdAsync
-      consumes:
-        - application/json
       produces:
         - application/json
       parameters:
@@ -51,6 +47,9 @@ paths:
         name: ttl
         type: integer
         required: true
+        minimum: 1
+        maximum: 120000
+        description: The ttl in ms to apply.
       responses:
         200:
           description: On success returns lock token.
@@ -96,8 +95,6 @@ paths:
       - "Unlock"
       description: Tries to unlock a resource by resource id.
       operationId: tryUnlockResourceByIdAsync
-      consumes:
-        - application/json
       produces:
         - application/json
       parameters:

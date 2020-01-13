@@ -2,7 +2,7 @@
 
 var Redis = require('ioredis');
 
-var Locker = require(__dirname + '/locker');
+var Locker = require('./locker');
 
 /**
  * An implementation of locker functionality for redis.
