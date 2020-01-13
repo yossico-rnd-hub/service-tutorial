@@ -38,8 +38,9 @@ swaggerTools.initializeMiddleware(swaggerDoc, (middleware) => {
         exposeHeaders: ['X-Request-Id']
     }));
 
-    // Configure swagger middlewares for exposing metadata.
+    // Configure swagger middlewares for exposing metadata and validations.
     service.use(middleware.swaggerMetadata());
+    service.use(middleware.swaggerValidator());
 
     // Configure swagger router - this handles the routings specified in the swagger.yaml.
     let options = {
