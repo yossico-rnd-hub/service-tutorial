@@ -7,9 +7,6 @@ var redisLocker = new RedisLocker({
     host: 'localhost'
 });
 
-var resourceId = 'lilo';
-var ttl = 10;
-
 async function test_lock_unlock(resourceId, ttl) {
     let token = await redisLocker.lock(resourceId, ttl);
     console.log('lock success: ' + token);
@@ -52,10 +49,24 @@ async function test_is_locked(resourceId) {
     }
 }
 
+async function test_renewal(resourceId, ttl) {
+    try {
+        let token = await redisLocker.lock(resourceId, ttl);
+        // await redisLocker.renewLease(resourceId, token, ttl);
+    }
+    catch (e) {
+        console.log('ERROR: ' + e);
+    }
+}
+
 async function run_all_tests() {
+    let resourceId = 'lilo';
+    let ttl = 10;
+
     try {
         await test_lock_unlock(resourceId, ttl);
         await test_is_locked(resourceId);
+        await test_renewal(resourceId, ttl);
     }
     finally {
         redisLocker.disconnect();

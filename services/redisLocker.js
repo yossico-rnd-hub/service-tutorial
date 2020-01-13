@@ -151,7 +151,7 @@ module.exports = class RedisLocker extends Locker {
         if (typeof ttl != 'number' || ttl <= 0)
             throw TypeError('(required) ttl should be a number > 0');
 
-        // lilo:TODO
+        return this._redis.set(resourceId, token, 'ex', ttl);
     }
 
     /**
