@@ -9,3 +9,6 @@ npm-debug.log*
 
 .eslint*
 
+*/conf.d/*
+
+production.json

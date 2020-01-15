@@ -4,11 +4,11 @@
       "port" : {{ getv "/config/global/redis/port" "6379" }}
   },
   "swagger" : {
-    "port" : {{ getv "/config/locker/port" "80" }},
+    "port" : {{ getv "/config/locker/port" "8020" }},
     "host" : "{{ getv "/config/locker/host" "http://localhost" }}"
-  }
+  },
   "logger" : {
     "loggerLevel" : "{{ getv "/config/locker/logging/level" "info" }}",
     "dateFormat" : "{{ getv "/config/locker/logging/dateformat" "yyyy-mm-dd'T'HH:MM:ss.l'Z'" }}"
-  },
+  }
 }

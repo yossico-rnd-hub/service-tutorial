@@ -1,0 +1,12 @@
+config:
+  global:
+      redis:
+        host: localhost
+        port: 6379
+  locker:
+    logger: 
+      loggerLevel: info
+      dateFormat: yyyy-mm-dd'T'HH:MM:ss.l'Z'
+    swagger:
+      port: 4777
+      host: http://localhost

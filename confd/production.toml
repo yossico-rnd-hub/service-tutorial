@@ -1,5 +1,5 @@
 [template]
-src = "config.json.tmpl"
+src = "production.tmpl"
 dest = "config/production.json"
 keys = [
   "/config/global/redis/host", 

@@ -24,7 +24,7 @@ const service = connect();
 // You can also use F12 keyboard shortcut to navigate to the function's public api comments.
 
 // Serve static files - readme.
-service.use(serveStatic("."));
+service.use(serveStatic("./docs/"));
 
 // Read swagger doc and load it to a js object.
 let spec = fs.readFileSync("./api/swagger.yaml", "utf8");

@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-# Run confd, the CONFD_BACKEND is an environment variable that is passed to the docker on run.
-confd -onetime -backend ${CONFD_BACKEND:-env}
+# Run confd.
+confd -onetime -backend etcdv3 -node http://etcd:2379
 
 echo "Running application"
 
